@@ -6,7 +6,8 @@ const
     lastName: String,
     teamName: String,
     teamCity: String,
-    position: String
+    position: String,
+    active: Boolean
   });
   
   module.exports = mongoose.model('Player', playerSchema)
