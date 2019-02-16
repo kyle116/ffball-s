@@ -13,7 +13,8 @@ const
   Lobby = require('./models/Lobby'),
   List = require('./models/List'),
   Team = require('./models/Team'),
-  Player = require('./models/Player')
+  Player = require('./models/Player'),
+  lobbies = require('./routes/api/lobbies')
 
 // MongoDB Connection
 mongoose.connect(mongoUrl, (err) => {
@@ -25,32 +26,7 @@ app.use(cors());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 
-app.use('/api/lobbies', require('./routes/api/lobbies'));
-// app.use('/api/podcasts', require('./routes/api/podcasts'));
-
-// Routes
-// app.get('/', (req, res) => {
-//   res.json({message: 'Root Route'});
-// })
-//
-// app.route('/lobby')
-//   .get((req, res) =>{
-//     Lobby.find({}, (err, lobbies) =>{
-//       res.json(lobbies);
-//     })
-//   })
-//   .post((req, res) => {
-//     Lobby.create(req.body, (err, lobby) =>{
-//       res.json({success: true, message: "Lobby Created", lobby});
-//     })
-//   })
-//
-// app.route('/lobby/:id')
-//   .get((req, res) => {
-//     Lobby.findById(req.params.id, (err, lobby) => {
-//       res.json(lobby);
-//     })
-//   })
+app.use('/api/lobbies', lobbies);
 
 // Port
 app.listen(PORT, () => {
