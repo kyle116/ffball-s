@@ -10,11 +10,11 @@ const
   PORT = process.env.PORT || 3001,
   token = process.env.TOKEN,
   mongoUrl = (process.env.MONGO_URL || 'mongodb://localhost/ffball-s'),
-  Lobby = require('./Lobby'),
-  List = require('./List'),
-  Team = require('./Team'),
-  Player = require('./Player')
-  
+  Lobby = require('./models/Lobby'),
+  List = require('./models/List'),
+  Team = require('./models/Team'),
+  Player = require('./models/Player')
+
 // MongoDB Connection
 mongoose.connect(mongoUrl, (err) => {
   console.log(err || 'connected to MongoDB');
@@ -25,31 +25,32 @@ app.use(cors());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 
-
+app.use('/api/lobbies', require('./routes/api/lobbies'));
+// app.use('/api/podcasts', require('./routes/api/podcasts'));
 
 // Routes
-app.get('/', (req, res) => {
-  res.json({message: 'Root Route'});
-})
-
-app.route('/lobby')
-  .get((req, res) =>{
-    Lobby.find({}, (err, lobbies) =>{
-      res.json(lobbies);
-    })
-  })
-  .post((req, res) => {
-    Lobby.create(req.body, (err, lobby) =>{
-      res.json({success: true, message: "Lobby Created", lobby});
-    })
-  })
-
-app.route('/lobby/:id')
-  .get((req, res) => {
-    Lobby.findById(req.params.id, (err, lobby) => {
-      res.json(lobby);
-    })
-  })
+// app.get('/', (req, res) => {
+//   res.json({message: 'Root Route'});
+// })
+//
+// app.route('/lobby')
+//   .get((req, res) =>{
+//     Lobby.find({}, (err, lobbies) =>{
+//       res.json(lobbies);
+//     })
+//   })
+//   .post((req, res) => {
+//     Lobby.create(req.body, (err, lobby) =>{
+//       res.json({success: true, message: "Lobby Created", lobby});
+//     })
+//   })
+//
+// app.route('/lobby/:id')
+//   .get((req, res) => {
+//     Lobby.findById(req.params.id, (err, lobby) => {
+//       res.json(lobby);
+//     })
+//   })
 
 // Port
 app.listen(PORT, () => {
