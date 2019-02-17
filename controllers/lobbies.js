@@ -14,7 +14,7 @@ class LobbyController {
 
   create(req, res) {
     Lobby.create(req.body, (err, lobby) =>{
-      if (err) return res.status(500).send(err);
+      if (err) return res.status(500).send(err.message);
       const response = {
         message: 'Lobby Created',
         success: true,
@@ -26,6 +26,12 @@ class LobbyController {
 
   show(req, res) {
     Lobby.findById(req.params.id, (err, lobby) => {
+      res.json(lobby);
+    })
+  }
+
+  findByName(req, res) {
+    Lobby.find({name: decodeURI(req.params.lobbyName)}, (err, lobby) => {
       res.json(lobby);
     })
   }
