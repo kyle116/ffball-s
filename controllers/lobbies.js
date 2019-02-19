@@ -32,6 +32,7 @@ class LobbyController {
 
   findByName(req, res) {
     Lobby.find({name: decodeURI(req.params.lobbyName)}, (err, lobby) => {
+      // if (lobby.length === 0) return res.status(500).json('No lobbies found');
       res.json(lobby);
     })
   }
