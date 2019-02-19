@@ -44,6 +44,9 @@ class UserController {
       // remove the password from this object before creating the token:
       delete userData.password
 
+      userData['iat'] = new Date().getTime() / 1000;
+      userData['exp'] = (new Date().getTime() + 10000000) / 1000; // 1000 = 1 second
+
       // create the token, embedding the user's info in the payload of the token:
       const token = jwt.sign(userData, process.env.SECRET_TOKEN)
 

@@ -8,7 +8,6 @@ const
 
   // Public Routes
   router.get('/', usersCtrl.index);
-  // router.get('/lobby', usersCtrl.index);
   router.post('/new', usersCtrl.create);
   router.post('/login', usersCtrl.login);
 
