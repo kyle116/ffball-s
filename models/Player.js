@@ -1,6 +1,6 @@
 const
   mongoose = require('mongoose'),
-  
+
   playerSchema = new mongoose.Schema({
     firstName: String,
     lastName: String,
@@ -9,5 +9,5 @@ const
     position: String,
     active: Boolean
   });
-  
-  module.exports = mongoose.model('Player', playerSchema)
+
+module.exports = mongoose.model('Player', playerSchema)

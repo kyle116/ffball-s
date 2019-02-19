@@ -1,7 +1,9 @@
-var express = require('express');
-var router = express.Router();
-var Lobby = require('../../models/Lobby');
-var lobbiesCtrl = require('../../controllers/lobbies');
+const
+  express = require('express'),
+  router = express.Router(),
+  Lobby = require('../../models/Lobby'),
+  lobbiesCtrl = require('../../controllers/lobbies'),
+  tool = require('../../tools/tools')
 
 // Public Routes
 router.get('/', lobbiesCtrl.index);

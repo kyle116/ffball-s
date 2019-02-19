@@ -5,4 +5,4 @@ const
     players: [{type: mongoose.Schema.Types.ObjectId, ref: 'Player'}]
   });
 
-  module.exports = mongoose.model('List', listSchema);
+module.exports = mongoose.model('List', listSchema);
