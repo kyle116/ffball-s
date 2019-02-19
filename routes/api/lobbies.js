@@ -5,6 +5,7 @@ const
   lobbiesCtrl = require('../../controllers/lobbies'),
   tool = require('../../tools/tools')
 
+
 // Public Routes
 router.get('/', lobbiesCtrl.index);
 router.get('/lobby', lobbiesCtrl.index);

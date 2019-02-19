@@ -1,4 +1,6 @@
-const jwt = require('jsonwebtoken');
+const
+  jwt = require('jsonwebtoken'),
+  dotenv = require('dotenv').load()
 
 function isLoggedIn(req, res, next) {
   // check header or url parameters or post parameters for token
