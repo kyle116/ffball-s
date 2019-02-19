@@ -13,21 +13,21 @@ const
   });
 
   // hash the PW and encrypt it
-  userSchema.methods.generateHash = function(password){
-    return bcrypt.hashSync(password, bcrypt.genSaltSync(8))
-  }
+  userSchema.methods.generateHash = function(password) {
+    return bcrypt.hashSync(password, bcrypt.genSaltSync(8));
+  };
 
   // compare stored PW to currentPW
-  userSchema.methods.validPassword = function(password){
-    if(!password) return false
-    return bcrypt.compareSync(password, this.password)
-  }
+  userSchema.methods.validPassword = function(password) {
+    if(!password) return false;
+    return bcrypt.compareSync(password, this.password);
+  };
 
   // encrypt PW before saving PW
-  userSchema.pre('save', function(next){
-    if(!this.isModified('password')) return next()
-    this.password = this.generateHash(this.password)
-    next()
+  userSchema.pre('save', function(next) {
+    if(!this.isModified('password')) return next();
+    this.password = this.generateHash(this.password);
+    next();
   });
 
 module.exports = mongoose.model('User', userSchema);
