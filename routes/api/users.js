@@ -8,8 +8,10 @@ const
 
   // Public Routes
   router.get('/', usersCtrl.index);
-  router.get('/lobby', usersCtrl.index);
+  // router.get('/lobby', usersCtrl.index);
   router.post('/new', usersCtrl.create);
+  router.post('/login', usersCtrl.login);
+  router.get('/edit/:id', usersCtrl.edit);
   router.get('/:id', usersCtrl.show);
   // router.get('/find/:lobbyName', usersCtrl.findByName); // finds lobby by name field
   router.delete('/:id', usersCtrl.delete);

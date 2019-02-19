@@ -1,5 +1,5 @@
 const
-  moongoose = require('mongoose'),
+  mongoose = require('mongoose'),
   bcrypt = require('bcrypt-nodejs'),
 
   userSchema = new mongoose.Schema({
@@ -7,7 +7,7 @@ const
     lastName: String,
     username: String,
     email: { type: String, required: [true, 'Email field cannot be blank'], unique: true },
-    password: { type: String, select: false, required: [true, 'Email field cannot be blank'], unique: true },
+    password: { type: String, select: false, required: [true, 'Password field cannot be blank'], unique: true },
     teams: [{type: mongoose.Schema.Types.ObjectId, ref: 'Team'}]
     // select: false used to prevent PW from being sent back in response
   });

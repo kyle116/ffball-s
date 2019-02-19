@@ -14,7 +14,8 @@ const
   List = require('./models/List'),
   Team = require('./models/Team'),
   Player = require('./models/Player'),
-  lobbies = require('./routes/api/lobbies')
+  lobbies = require('./routes/api/lobbies'),
+  users = require('./routes/api/users')
 
 // MongoDB Connection
 mongoose.connect(mongoUrl, (err) => {
@@ -26,7 +27,9 @@ app.use(cors());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 
+// Routes
 app.use('/api/lobbies', lobbies);
+app.use('/api/users', users);
 
 // Port
 app.listen(PORT, () => {
