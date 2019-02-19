@@ -3,7 +3,7 @@ const
   router = express.Router(),
   User = require('../../models/User'),
   usersCtrl = require('../../controllers/users'),
-  tool = require('../../tools/tools')
+  tools = require('../../tools/tools')
 
 
   // Public Routes
@@ -11,10 +11,11 @@ const
   // router.get('/lobby', usersCtrl.index);
   router.post('/new', usersCtrl.create);
   router.post('/login', usersCtrl.login);
-  router.get('/edit/:id', usersCtrl.edit);
-  router.get('/:id', usersCtrl.show);
-  // router.get('/find/:lobbyName', usersCtrl.findByName); // finds lobby by name field
-  router.delete('/:id', usersCtrl.delete);
+
+  // Private Routes: User Auth Required
+  router.get('/edit/:id', tools.isLoggedIn, usersCtrl.edit);
+  router.get('/:id', tools.isLoggedIn, usersCtrl.show);
+  router.delete('/:id', tools.isLoggedIn, usersCtrl.delete);
 
 
   module.exports = router;

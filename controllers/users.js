@@ -3,10 +3,10 @@ const
   jwt = require('jsonwebtoken');
 
 var response = {
-    message: '',
-    success: true,
-    user: null
-  }
+  message: '',
+  success: true,
+  user: null
+};
 
 class UserController {
   // Public

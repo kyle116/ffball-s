@@ -1,3 +1,4 @@
+// Source: https://stackoverflow.com/questions/47670921/express-jwt-exclude-certain-routes
 const
   jwt = require('jsonwebtoken'),
   dotenv = require('dotenv').load()
