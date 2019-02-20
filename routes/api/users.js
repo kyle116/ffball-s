@@ -5,7 +5,7 @@ const
   usersCtrl = require('../../controllers/users'),
   tools = require('../../tools/tools')
 
-
+  // Route: /api/users
   // Public Routes
   router.get('/', usersCtrl.index);
   router.post('/new', usersCtrl.create);
