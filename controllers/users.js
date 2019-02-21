@@ -31,11 +31,18 @@ class UserController {
     const loginData = req.body.email ? {email: req.body.email} : {username: req.body.username};
     // When retrieving the user from database, include the password for authentication:
     User.findOne(loginData, '+password', (err, user) => {
+      // Error check
+      if(err) return res.status(500).send(err);
+      // Not being able to find a user does is not an error, handles null
+      if(user === null) {
+        response = {success: false, message: 'Could not find registered user with the email/username'};
+        return res.status(500).send(response);
+      }
       // if there's no user found, or they put a wrong password:
       if(!user || (user && !user.validPassword(req.body.password))) {
         // stop here and let the client know that the info is incorrect:
-        response = {success: false, message: 'Incorrect email/username or password.'};
-        return res.status(500).json(response);
+        // response = {success: false, message: 'Incorrect email/username or password.'};
+        return res.status(500).send({success: false, message: 'Incorrect email/username or password.'});
       }
       // otherwise, use mongoose document's toObject() method to get a stripped down version of
       // just the user's data (name, email etc) as a simple object:
