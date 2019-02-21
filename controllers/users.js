@@ -33,7 +33,7 @@ class UserController {
     User.findOne(loginData, '+password', (err, user) => {
       // Error check
       if(err) return res.status(500).send(err);
-      // Not being able to find a user does is not an error, handles null
+      // Not being able to find a user is not an error, handles null
       if(user === null) {
         response = {success: false, message: 'Could not find registered user with the email/username'};
         return res.status(500).send(response);
@@ -41,8 +41,8 @@ class UserController {
       // if there's no user found, or they put a wrong password:
       if(!user || (user && !user.validPassword(req.body.password))) {
         // stop here and let the client know that the info is incorrect:
-        // response = {success: false, message: 'Incorrect email/username or password.'};
-        return res.status(500).send({success: false, message: 'Incorrect email/username or password.'});
+        response = {success: false, message: 'Incorrect email/username or password.'};
+        return res.status(500).send(response);
       }
       // otherwise, use mongoose document's toObject() method to get a stripped down version of
       // just the user's data (name, email etc) as a simple object:
@@ -55,8 +55,7 @@ class UserController {
       userData['exp'] = (new Date().getTime() + 10000000) / 1000; // 1000 = 1 second
 
       // create the token, embedding the user's info in the payload of the token:
-      const token = jwt.sign(userData, process.env.SECRET_TOKEN)
-
+      const token = jwt.sign(userData, process.env.SECRET_TOKEN);
       // send the token back to the client in our response:
       response = {success: true, message: 'Logged in successfully.', token};
       return res.status(200).json(response);
