@@ -29,6 +29,7 @@ class UserController {
   login(req, res) {
     // first, find user by the email/username in the request body.
     const loginData = req.body.email ? {email: req.body.email} : {username: req.body.username};
+    console.log(loginData);
     // When retrieving the user from database, include the password for authentication:
     User.findOne(loginData, '+password', (err, user) => {
       // Error check
