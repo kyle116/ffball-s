@@ -18,7 +18,8 @@ const
   users = require('./routes/api/users')
 
 // MongoDB Connection
-mongoose.connect(mongoUrl, (err) => {
+mongoose.Promise = global.Promise;
+mongoose.connect(mongoUrl, { useMongoClient: true }, (err) => {
   console.log(err || 'connected to MongoDB');
 });
 

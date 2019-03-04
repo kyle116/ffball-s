@@ -1,53 +1,93 @@
 const Lobby = require('../models/Lobby');
+const List = require('../models/List');
+const Player = require('../models/Player');
 const jwt = require('jsonwebtoken');
 
 class LobbyController {
-  home(req, res) {
-    res.json({message: 'Root Route'});
-  }
+	constructor() {
+		// this.getPlayers = this.getPlayers.bind(this);
+		this.createList = this.createList.bind(this);
+		this.createLobby = this.createLobby.bind(this);
+	}
 
-  index(req, res) {
-    Lobby.find({}, (err, lobbies) => {
-      res.json(lobbies);
-    });
-  }
+	async getPlayers(req, res) {
+		try {
+			var allPlayers = await Player.find({});
+		} catch(err) {
+			console.log(err.message);
+			return err.message;
+		}
+		for (var i = 0; i < allPlayers.length; i++) {
+			allPlayers[i] = allPlayers[i].toObject();
+		}
+		return allPlayers;
+	}
 
-  create(req, res) {
-    Lobby.create(req.body, (err, lobby) =>{
-      if (err) return res.status(500).send(err.message);
-      const response = {
-        message: 'Lobby Created',
-        success: true,
-        lobby: lobby
-      };
-      res.status(200).json(response);
-    });
-  }
+	async createList(req, res) {
+		try {
+			var allPlayers = await this.getPlayers();
+			var createdList = await List.create({});
+		} catch(err) {
+			console.log(err.message);
+			return err.message;
+		}
+		createdList.players = allPlayers;
+		createdList.save();
+		return createdList;
+	}
 
-  findLobbyById(req, res) {
-    Lobby.findById(req.params.lobbyId, (err, lobby) => {
-      res.json(lobby);
-    });
-  }
+	async createLobby(req, res) {
+		try {
+			var createdList = await this.createList();
+			var createdLobby = await Lobby.create(req.body);
+		} catch(err) {
+			console.log(err);
+			return res.status(500).send(err.message);
+		}
+		createdLobby.list = createdList;
+		createdLobby.save();
+		const response = {
+			message: 'Lobby Created',
+			success: true,
+			lobby: createdLobby
+		};
+		res.status(200).json(response);
+	}
 
-  findLobbyByName(req, res) {
-    Lobby.find({name: decodeURI(req.params.lobbyName)}, (err, lobby) => {
-      // if (lobby.length === 0) return res.status(500).json('No lobbies found');
-      res.json(lobby);
-    });
-  }
+	home(req, res) {
+		res.json({message: 'Root Route'});
+	}
 
-  delete(req, res) {
-    Lobby.findByIdAndRemove(req.params.id, (err, deletedLobby) => {
-      if (err) return res.status(500).send(err);
-      const response = {
-        message: 'Lobby successfully deleted',
-        id: req.params.id,
-        deletedLobby: deletedLobby
-      };
-      return res.status(200).json(response);
-    });
-  }
+	index(req, res) {
+		Lobby.find({}, (err, lobbies) => {
+			res.json(lobbies);
+		});
+	}
+
+	findLobbyById(req, res) {
+		Lobby.findById(req.params.lobbyId, (err, lobby) => {
+			res.json(lobby);
+		});
+	}
+
+	findLobbyByName(req, res) {
+		Lobby.find({name: decodeURI(req.params.lobbyName)}, (err, lobby) => {
+			// if (lobby.length === 0) return res.status(500).json('No lobbies found');
+			res.json(lobby);
+		});
+	}
+
+	delete(req, res) {
+		Lobby.findByIdAndRemove(req.params.id, (err, deletedLobby) => {
+			if (err) return res.status(500).send(err);
+			const response = {
+				message: 'Lobby successfully deleted',
+				id: req.params.id,
+				deletedLobby: deletedLobby
+			};
+			return res.status(200).json(response);
+		});
+	}
 }
 
 module.exports = new LobbyController();
