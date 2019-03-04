@@ -65,7 +65,7 @@ class LobbyController {
 	}
 
 	findLobbyById(req, res) {
-		Lobby.findById(req.params.lobbyId, (err, lobby) => {
+		Lobby.findById(req.params.lobbyId).populate('list').exec((err, lobby) => {
 			res.json(lobby);
 		});
 	}
