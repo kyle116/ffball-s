@@ -65,19 +65,32 @@ class LobbyController {
 		});
 	}
 
-	findLobbyById(req, res) {
+	async findLobbyById(req, res) {
+		try {
+			var currentLobby = await Lobby.findById(req.get('currentUserId'));
+		} catch(err) {
+			console.log(err);
+			return res.status(500).send(err.message);
+		}
 		var currentUserJoined = false;
+		var currentUserTeam = null;
+		var currentLobbyTeamsExcludeUser = [];
 		Lobby.findById(req.params.lobbyId).populate('list').populate('teams').exec((err, lobby) => {
 			for (var i = 0; i < lobby.teams.length; i++) {
 				if(lobby.teams[i].user.equals(req.get('currentUserId'))) {
 					currentUserJoined = true;
+					currentUserTeam = lobby.teams[i];
+				} else {
+					currentLobbyTeamsExcludeUser.push(lobby.teams[i]);
 				}
 			}
 			const response = {
 				message: 'Lobby Found',
 				success: true,
 				lobby: lobby,
-				currentUserJoined: currentUserJoined
+				currentUserJoined: currentUserJoined,
+				currentUserTeam: currentUserTeam,
+				currentLobbyTeamsExcludeUser: currentLobbyTeamsExcludeUser
 			};
 			res.status(200).json(response);
 		});
@@ -93,20 +106,23 @@ class LobbyController {
 	async joinLobby(req, res) {
 		try {
 			var currentLobby = await Lobby.findById(req.params.lobbyId);
-			var newTeam = await Team.create({lobby: req.body.lobby, user: req.body.user});			
+			var currentUserTeam = await Team.create({lobby: req.body.lobby, user: req.body.user});			
 		} catch(err) {
 			console.log(err);
 			return res.status(500).send(err.message);
 		}
-
+		var currentLobbyTeamsExcludeUser = [...currentLobby.teams];
 		var currentLobbyTeams = currentLobby.teams;
-		currentLobbyTeams.push(newTeam);
+		currentLobbyTeams.push(currentUserTeam);
 		currentLobby.save();
 
 		const response = {
 			message: 'Lobby Joined',
 			success: true,
-			team: newTeam
+			currentLobbyTeams: currentLobbyTeams,
+			currentUserTeam: currentUserTeam,
+			currentLobbyTeamsExcludeUser: currentLobbyTeamsExcludeUser,
+			currentUserJoined: true
 		};
 		res.status(200).json(response);
 	}
