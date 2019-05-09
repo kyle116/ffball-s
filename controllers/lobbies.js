@@ -1,5 +1,6 @@
 const Lobby = require('../models/Lobby');
 const List = require('../models/List');
+const Team = require('../models/Team');
 const Player = require('../models/Player');
 const jwt = require('jsonwebtoken');
 
@@ -65,8 +66,20 @@ class LobbyController {
 	}
 
 	findLobbyById(req, res) {
-		Lobby.findById(req.params.lobbyId).populate('list').exec((err, lobby) => {
-			res.json(lobby);
+		var currentUserJoined = false;
+		Lobby.findById(req.params.lobbyId).populate('list').populate('teams').exec((err, lobby) => {
+			for (var i = 0; i < lobby.teams.length; i++) {
+				if(lobby.teams[i].user.equals(req.get('currentUserId'))) {
+					currentUserJoined = true;
+				}
+			}
+			const response = {
+				message: 'Lobby Found',
+				success: true,
+				lobby: lobby,
+				currentUserJoined: currentUserJoined
+			};
+			res.status(200).json(response);
 		});
 	}
 
@@ -75,6 +88,27 @@ class LobbyController {
 			// if (lobby.length === 0) return res.status(500).json('No lobbies found');
 			res.json(lobby);
 		});
+	}
+
+	async joinLobby(req, res) {
+		try {
+			var currentLobby = await Lobby.findById(req.params.lobbyId);
+			var newTeam = await Team.create({lobby: req.body.lobby, user: req.body.user});			
+		} catch(err) {
+			console.log(err);
+			return res.status(500).send(err.message);
+		}
+
+		var currentLobbyTeams = currentLobby.teams;
+		currentLobbyTeams.push(newTeam);
+		currentLobby.save();
+
+		const response = {
+			message: 'Lobby Joined',
+			success: true,
+			team: newTeam
+		};
+		res.status(200).json(response);
 	}
 
 	delete(req, res) {

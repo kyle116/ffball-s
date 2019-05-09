@@ -13,6 +13,7 @@ router.post('/new', lobbiesCtrl.createLobby);
 router.post('/newList', lobbiesCtrl.createList);
 router.get('/find/:lobbyId', lobbiesCtrl.findLobbyById);
 router.get('/find/:lobbyName', lobbiesCtrl.findLobbyByName); // finds lobby by name field
+router.post('/join/:lobbyId', lobbiesCtrl.joinLobby); 
 router.delete('/:id', lobbiesCtrl.delete);
 
 
