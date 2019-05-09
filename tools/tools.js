@@ -6,7 +6,6 @@ const
 function isLoggedIn(req, res, next) {
   // check header or url parameters or post parameters for token
   var token = req.headers.token;
-  console.log('token', token)
   // decode token
   if (token) {
     // verifies secret and checks exp, ignores expiration to return custom message

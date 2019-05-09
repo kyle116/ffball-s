@@ -105,7 +105,7 @@ class LobbyController {
 
 	async joinLobby(req, res) {
 		try {
-			var currentLobby = await Lobby.findById(req.params.lobbyId);
+			var currentLobby = await Lobby.findById(req.params.lobbyId).populate('teams');
 			var currentUserTeam = await Team.create({lobby: req.body.lobby, user: req.body.user});			
 		} catch(err) {
 			console.log(err);
