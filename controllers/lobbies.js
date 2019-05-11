@@ -3,6 +3,7 @@ const List = require('../models/List');
 const Team = require('../models/Team');
 const Player = require('../models/Player');
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 
 class LobbyController {
 	constructor() {
@@ -67,33 +68,32 @@ class LobbyController {
 
 	async findLobbyById(req, res) {
 		try {
-			var currentLobby = await Lobby.findById(req.get('currentUserId'));
+			var currentUserJoined = false;
+			var currentUserTeam = null;
+			var currentLobbyTeamsExcludeUser = [];
+			Lobby.findById(req.params.lobbyId).populate('list').populate('teams').exec((err, lobby) => {
+				for (var i = 0; i < lobby.teams.length; i++) {
+					if(lobby.teams[i].user.equals(req.get('currentUserId'))) {
+						currentUserJoined = true;
+						currentUserTeam = lobby.teams[i];
+					} else {
+						currentLobbyTeamsExcludeUser.push(lobby.teams[i]);
+					}
+				}
+				const response = {
+					message: 'Lobby Found',
+					success: true,
+					lobby: lobby,
+					currentUserJoined: currentUserJoined,
+					currentUserTeam: currentUserTeam,
+					currentLobbyTeamsExcludeUser: currentLobbyTeamsExcludeUser
+				};
+				res.status(200).json(response);
+			});
 		} catch(err) {
 			console.log(err);
 			return res.status(500).send(err.message);
 		}
-		var currentUserJoined = false;
-		var currentUserTeam = null;
-		var currentLobbyTeamsExcludeUser = [];
-		Lobby.findById(req.params.lobbyId).populate('list').populate('teams').exec((err, lobby) => {
-			for (var i = 0; i < lobby.teams.length; i++) {
-				if(lobby.teams[i].user.equals(req.get('currentUserId'))) {
-					currentUserJoined = true;
-					currentUserTeam = lobby.teams[i];
-				} else {
-					currentLobbyTeamsExcludeUser.push(lobby.teams[i]);
-				}
-			}
-			const response = {
-				message: 'Lobby Found',
-				success: true,
-				lobby: lobby,
-				currentUserJoined: currentUserJoined,
-				currentUserTeam: currentUserTeam,
-				currentLobbyTeamsExcludeUser: currentLobbyTeamsExcludeUser
-			};
-			res.status(200).json(response);
-		});
 	}
 
 	findLobbyByName(req, res) {
@@ -128,6 +128,11 @@ class LobbyController {
 	}
 
 	delete(req, res) {
+		// Removes all teams with associated Lobby id
+		Team.remove({lobby: {$in: [req.params.id].map(mongoose.Types.ObjectId)}}, (err, result) => {
+			if (err) return res.status(500).send(err);
+		});
+		// Removes the lobby
 		Lobby.findByIdAndRemove(req.params.id, (err, deletedLobby) => {
 			if (err) return res.status(500).send(err);
 			const response = {
