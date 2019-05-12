@@ -15,7 +15,8 @@ const
   Team = require('./models/Team'),
   Player = require('./models/Player'),
   lobbies = require('./routes/api/lobbies'),
-  users = require('./routes/api/users')
+  users = require('./routes/api/users'),
+  socket = require('socket.io');
 
 // MongoDB Connection
 mongoose.Promise = global.Promise;
@@ -33,6 +34,20 @@ app.use('/api/lobbies', lobbies);
 app.use('/api/users', users);
 
 // Port
-app.listen(PORT, () => {
-  console.log(`server is litening on port ${PORT}`);
-})
+var server = app.listen(PORT, function(){
+    console.log(`server is litening on port ${PORT}`);
+});
+var io = socket(server);
+io.on('connection', (socket) => {
+    console.log(socket.id);
+    socket.on('connection', function(data){
+      io.emit('connection', data);
+    })
+
+    socket.on('TEST_SOCKET', function(data){
+      io.emit('RECEIVE_MESSAGE', data);
+    })
+});
+// app.listen(PORT, () => {
+//   console.log(`server is litening on port ${PORT}`);
+// })
